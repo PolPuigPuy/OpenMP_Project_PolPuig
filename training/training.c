@@ -108,18 +108,22 @@ void back_prop(int p) {
 
     // Hidden Layers
     for (int i = num_layers - 2; i > 0; i--) {
+        #pragma omp parallel for
         for (int j = 0; j < num_neurons[i]; j++) {
             lay[i].dz[j] = (lay[i].z[j] >= 0) ? lay[i].dactv[j] : 0;
-
+    
             for (int k = 0; k < num_neurons[i - 1]; k++) {
                 lay[i - 1].dw[j * num_neurons[i - 1] + k] =
                     lay[i].dz[j] * lay[i - 1].actv[k];
-
-                if (i > 1)
-                    lay[i - 1].dactv[k] =
+    
+                if (i > 1) {
+                    #pragma omp critical
+                    lay[i - 1].dactv[k] +=
                         lay[i - 1].out_weights[j * num_neurons[i - 1] + k] *
                         lay[i].dz[j];
+                }
             }
+    
             lay[i].dbias[j] = lay[i].dz[j];
         }
     }
@@ -134,13 +138,20 @@ void back_prop(int p) {
  */
 void update_weights(void) {
     for (int i = 0; i < num_layers - 1; i++) {
-        for (int j = 0; j < num_neurons[i + 1]; j++)
-            for (int k = 0; k < num_neurons[i]; k++)  // Update Weights
-                lay[i].out_weights[j * num_neurons[i] + k] =
-                    (lay[i].out_weights[j * num_neurons[i] + k]) -
-                    (alpha * lay[i].dw[j * num_neurons[i] + k]);
+        // Parallelize weight updates
+        #pragma omp parallel for
+        for (int j = 0; j < num_neurons[i + 1]; j++) {
+            for (int k = 0; k < num_neurons[i]; k++) {
+                lay[i].out_weights[j * num_neurons[i] + k] -=
+                    alpha * lay[i].dw[j * num_neurons[i] + k];
+            }
+        }
 
-        for (int j = 0; j < num_neurons[i]; j++)  // Update Bias
-            lay[i].bias[j] = lay[i].bias[j] - (alpha * lay[i].dbias[j]);
+        // Parallelize bias updates
+        #pragma omp parallel for
+        for (int j = 0; j < num_neurons[i]; j++) {
+            lay[i].bias[j] -= alpha * lay[i].dbias[j];
+        }
     }
 }
+
