@@ -1,0 +1,42 @@
+ERROR: Unable to locate a modulefile for 'gcc/13.2.1'
+
+Training...
+
+Testing...
+
+Total encerts = 903
+
+
+Goodbye! (103.198880 sec)
+
+
+ Performance counter stats for './exec':
+
+        825.353,47 msec task-clock:u                     #    7,997 CPUs utilized             
+                 0      context-switches:u               #    0,000 /sec                      
+                 0      cpu-migrations:u                 #    0,000 /sec                      
+            10.342      page-faults:u                    #   12,530 /sec                      
+ 2.123.444.553.627      cycles:u                         #    2,573 GHz                         (50,00%)
+   207.830.980.259      stalled-cycles-frontend:u        #    9,79% frontend cycles idle        (50,00%)
+   496.722.410.987      stalled-cycles-backend:u         #   23,39% backend cycles idle         (50,00%)
+ 1.987.180.112.974      instructions:u                   #    0,94  insn per cycle            
+                                                  #    0,25  stalled cycles per insn     (50,00%)
+   473.694.943.130      branches:u                       #  573,930 M/sec                       (50,00%)
+       134.052.273      branch-misses:u                  #    0,03% of all branches             (50,00%)
+
+     103,211022067 seconds time elapsed
+
+     817,087997000 seconds user
+       0,428305000 seconds sys
+
+
+
+Training...
+
+Testing...
+
+Total encerts = 903
+
+
+Goodbye! (102.629932 sec)
+
